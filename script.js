@@ -17,5 +17,7 @@ function listFolders(folders) {
     });
 }
 
-// Call the function with your folders
-listFolders(folders);
+// Call the function with your folders when the window loads
+window.onload = function() {
+    listFolders(folders);
+}
