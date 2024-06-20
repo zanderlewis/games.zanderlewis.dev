@@ -11,8 +11,17 @@ function listFolders(folders) {
         let listItem = document.createElement('li');
         let link = document.createElement('a');
         link.href = folder.path;
-        link.textContent = folder.name + " created by " + folder.authors.join(", ");
+        link.textContent = folder.name;
         listItem.appendChild(link);
+        
+        let authors = document.createElement('p');
+        let hr = document.createElement('hr');
+        authors.textContent = "Authors: " + folder.authors.join(", ");
+        let hr2 = document.createElement('hr');
+        listItem.appendChild(authors); // Append the authors to the list item
+        listItem.appendChild(hr); // Append a horizontal rule to the list item
+        listItem.appendChild(hr2); // Append a horizontal rule to the list item
+
         folderList.appendChild(listItem);
     });
 }
