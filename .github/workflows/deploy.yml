@@ -21,4 +21,5 @@ jobs:
           DEPLOY_PATH: games.zanderlewis.dev/ # Change this to your project path
         run: |
           lftp -u $USERNAME,$PASSWORD sftp://$HOST -e "
+          set sftp:auto-confirm yes;
           mirror --reverse --delete --verbose ./ $DEPLOY_PATH; quit"
