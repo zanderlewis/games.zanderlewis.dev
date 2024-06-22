@@ -1,0 +1,24 @@
+name: Deploy to DreamHost via SFTP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install lftp
+        run: sudo apt-get install lftp
+
+      - name: Deploy via SFTP
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          HOST: ${{ secrets.HOST }}
+          DEPLOY_PATH: /path/to/your/project/ # Change this to your project path
+        run: |
+          lftp -u $USERNAME,$PASSWORD sftp://$HOST -e "
+          mirror --reverse --delete --verbose ./ $DEPLOY_PATH; quit"
