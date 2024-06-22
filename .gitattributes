@@ -1,4 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-endless-waves/*.html -diff -merge -text
-mini-colonies/*.html -diff -merge -text
+endless-waves/*.html linguist-documentation=true
+mini-colonies/*.html linguist-documentation=true
