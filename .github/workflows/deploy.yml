@@ -1,4 +1,4 @@
-name: Deploy to DreamHost via SFTP
+name: Deploy to DreamHost via rsync
 
 on:
   push:
@@ -12,16 +12,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install lftp
-        run: sudo apt-get install lftp
+      - name: Setup SSH
+        env:
+          HOST: ${{ secrets.HOST }}
+          KNOWN_HOSTS_ENTRY: ${{ secrets.KNOWN_HOSTS_ENTRY }} # DreamHost's provided known hosts entry
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "$KNOWN_HOSTS_ENTRY" >> ~/.ssh/known_hosts
 
-      - name: Deploy via SFTP
+      - name: Deploy via rsync
         env:
           USERNAME: ${{ secrets.USERNAME }}
-          PASSWORD: ${{ secrets.PASSWORD }}
           HOST: ${{ secrets.HOST }}
           DEPLOY_PATH: games.zanderlewis.dev/ # Change this to your project path
         run: |
-          lftp -u $USERNAME,$PASSWORD sftp://$HOST -e "
-          set sftp:auto-confirm yes;
-          mirror --reverse --delete --verbose --exclude .git/ ./ $DEPLOY_PATH; quit"
+          rsync -avz --delete --exclude .git/ ./ $USERNAME@$HOST:$DEPLOY_PATH
