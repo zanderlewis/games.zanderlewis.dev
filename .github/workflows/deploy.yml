@@ -1,4 +1,4 @@
-name: Deploy to DreamHost via rsync
+name: Deploy to DreamHost via sshpass
 
 on:
   push:
@@ -12,27 +12,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup SSH
-        env:
-          HOST: ${{ secrets.HOST }}
-          KNOWN_HOSTS_ENTRY: ${{ secrets.KNOWN_HOSTS_ENTRY }} # DreamHost's provided known hosts entry
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "$KNOWN_HOSTS_ENTRY" >> ~/.ssh/known_hosts
-      
-      - name: Test SSH Connection
-        env:
-          USERNAME: ${{ secrets.USERNAME }}
-          HOST: ${{ secrets.HOST }}
-        run: |
-          ssh -T $USERNAME@$HOST echo "SSH connection successful."
+      - name: Install sshpass
+        run: sudo apt-get install -y sshpass
 
-      - name: Deploy via rsync
+      - name: Deploy via rsync and sshpass
         env:
           USERNAME: ${{ secrets.USERNAME }}
+          PASSWORD: ${{ secrets.PASSWORD }}
           HOST: ${{ secrets.HOST }}
           DEPLOY_PATH: games.zanderlewis.dev/ # Change this to your project path
         run: |
-          rsync -avz --delete --exclude .git/ ./ $USERNAME@$HOST:$DEPLOY_PATH
+          sshpass -p "$PASSWORD" rsync -avz --delete --exclude .git/ ./ $USERNAME@$HOST:$DEPLOY_PATH
