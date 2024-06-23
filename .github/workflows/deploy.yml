@@ -21,6 +21,13 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           echo "$KNOWN_HOSTS_ENTRY" >> ~/.ssh/known_hosts
+      
+      - name: Test SSH Connection
+        env:
+          USERNAME: ${{ secrets.USERNAME }}
+          HOST: ${{ secrets.HOST }}
+        run: |
+          ssh -T $USERNAME@$HOST echo "SSH connection successful."
 
       - name: Deploy via rsync
         env:
